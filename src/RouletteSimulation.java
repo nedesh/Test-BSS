@@ -12,18 +12,19 @@ public class RouletteSimulation {
 
     public void runSimulation() {
         Random random = new Random();
-        double shotProbabilityWithRotate = 2.0 / 6.0;
-        double shotProbability = 1.0 / 4.0;
+        double firsShotProbability = 2.0 / 6.0;
+        double secondShotProbabilityWithRotate = 2.0 / 6.0;
+        double secondShotProbabilityWithoutRotate = 1.0 / 4.0; //после первой попытки выстрелить, если не крутить барабан, получается один смертельный вариант из четырех
 
         for (int i = 0; i < totalExperiments; i++) {
-            boolean firstSurvival = random.nextDouble() > shotProbabilityWithRotate;
-            boolean secondSurvivalWithRotate = random.nextDouble() > shotProbabilityWithRotate;
-            boolean secondSurvival = random.nextDouble() > shotProbability;
+            boolean firstSurvival = random.nextDouble() > firsShotProbability;  // Вероятность первого выжить
+            boolean secondSurvivalWithRotate = random.nextDouble() > secondShotProbabilityWithRotate;  // Вероятность второго выжить, если Крутим барабан
+            boolean secondSurvival = random.nextDouble() > secondShotProbabilityWithoutRotate; // Вероятность второго выжить, если сразу стреляем
 
             if (firstSurvival) {
-                firstPlayerSurvival++;
+                firstPlayerSurvival++; // Первый игрок выжил
                 if (secondSurvivalWithRotate) {
-                    secondPlayerSurvivalRotate++;
+                    secondPlayerSurvivalRotate++; // Второй игрок выжил
                 }
                 if (secondSurvival) {
                     secondPlayerSurvivalShoot++;
