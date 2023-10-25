@@ -1,19 +1,19 @@
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import java.util.Random;
 
+@RequiredArgsConstructor
 public class RouletteSimulation {
+    @NonNull
     private int totalExperiments;
     private double firstPlayerSurvival;
     private double secondPlayerSurvivalRotate;
     private double secondPlayerSurvivalShoot;
 
-    public RouletteSimulation(int totalExperiments) {
-        this.totalExperiments = totalExperiments;
-    }
-
-    public void runSimulation() {
+    public void runSimulation(boolean useBarrelRotation) {
         Random random = new Random();
         double firsShotProbability = 2.0 / 6.0;
-        double secondShotProbabilityWithRotate = 2.0 / 6.0;
+        double secondShotProbabilityWithRotate = 2.0 / 6.0; //Вероятность смертельного выстрела становится исходной при прокрутке
         double secondShotProbabilityWithoutRotate = 1.0 / 4.0; //после первой попытки выстрелить, если не крутить барабан, получается один смертельный вариант из четырех
 
         for (int i = 0; i < totalExperiments; i++) {
@@ -23,24 +23,22 @@ public class RouletteSimulation {
 
             if (firstSurvival) {
                 firstPlayerSurvival++; // Первый игрок выжил
-                if (secondSurvivalWithRotate) {
-                    secondPlayerSurvivalRotate++; // Второй игрок выжил
-                }
-                if (secondSurvival) {
+                if (useBarrelRotation && secondSurvivalWithRotate){
+                    secondPlayerSurvivalRotate++;
+                } else if (!useBarrelRotation && secondSurvival) {
                     secondPlayerSurvivalShoot++;
                 }
             }
         }
     }
 
-    public void printResults() {
-        double firstPlayerSurvivalPercentage = (firstPlayerSurvival / totalExperiments) * 100;
-        double secondPlayerSurvivalRotatePercentage = (secondPlayerSurvivalRotate / totalExperiments) * 100;
-        double secondPlayerSurvivalShootPercentage = (secondPlayerSurvivalShoot / totalExperiments) * 100;
-
+    public void printResults(boolean useBarrelRotation) {
         System.out.println("Total experiments: " + totalExperiments);
-        System.out.println("First Player Survival Percentage: " + firstPlayerSurvivalPercentage + "%");
-        System.out.println("Second Player Survival Percentage (Rotate): " + secondPlayerSurvivalRotatePercentage + "%");
-        System.out.println("Second Player Survival Percentage (Shoot): " + secondPlayerSurvivalShootPercentage + "%");
+        System.out.println("First Player Survival Percentage: " + (firstPlayerSurvival / totalExperiments) * 100 + "%");
+        if(useBarrelRotation) {
+            System.out.println("Second Player Survival Percentage (Rotate): " + (secondPlayerSurvivalRotate / totalExperiments) * 100 + "%");
+        } else {
+            System.out.println("Second Player Survival Percentage (Shoot): " + (secondPlayerSurvivalShoot / totalExperiments) * 100 + "%");
+        }
     }
 }
