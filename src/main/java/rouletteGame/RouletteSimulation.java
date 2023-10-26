@@ -9,9 +9,6 @@ import java.util.Random;
 @Component
 @RequiredArgsConstructor
 public class RouletteSimulation {
-    private double firstPlayerSurvival;
-    private double secondPlayerSurvivalRotate;
-    private double secondPlayerSurvivalShoot;
     private GameResult gameResult;
     @Value("${roulette.totalExperiments}")
     private int totalExperiments;
@@ -21,26 +18,16 @@ public class RouletteSimulation {
     private static final double SECOND_SHOT_PROBABILITY_WITH_ROTATE = 2.0 / 6.0; //Вероятность смертельного выстрела становится исходной при прокрутке
     private static final double SECOND_SHOT_PROBABILITY_WITHOUT_ROTATE = 1.0 / 4.0; //после первой попытки выстрелить, если не крутить барабан, получается один смертельный вариант из четырех
 
-
     public void startGame() {
         runSimulation();
-        calculateGameResult();
         printResults();
-    }
-
-    private void calculateGameResult() {
-        double firstPlayerSurvivalPercentage = (firstPlayerSurvival / totalExperiments) * 100;
-        double secondPlayerSurvivalPercentage;
-        if (useBarrelRotation) {
-            secondPlayerSurvivalPercentage = (secondPlayerSurvivalRotate / totalExperiments) * 100;
-        } else {
-            secondPlayerSurvivalPercentage = (secondPlayerSurvivalShoot / totalExperiments) * 100;
-        }
-        gameResult = new GameResult(firstPlayerSurvivalPercentage, secondPlayerSurvivalPercentage);
     }
 
     private void runSimulation() {
         Random random = new Random();
+        double firstPlayerSurvival = 0;
+        double secondPlayerSurvivalRotate = 0;
+        double secondPlayerSurvivalShoot = 0;
 
         for (int i = 0; i < totalExperiments; i++) {
             boolean firstSurvival = random.nextDouble() > FIRST_SHOT_PROBABILITY;  // Вероятность первого выжить
@@ -56,6 +43,15 @@ public class RouletteSimulation {
                 }
             }
         }
+        double firstPlayerSurvivalPercentage = (firstPlayerSurvival / totalExperiments) * 100;
+        double secondPlayerSurvivalPercentage;
+        if (useBarrelRotation) {
+            secondPlayerSurvivalPercentage = (secondPlayerSurvivalRotate / totalExperiments) * 100;
+        } else {
+            secondPlayerSurvivalPercentage = (secondPlayerSurvivalShoot / totalExperiments) * 100;
+        }
+
+        gameResult = new GameResult(firstPlayerSurvivalPercentage, secondPlayerSurvivalPercentage);
     }
 
     private void printResults() {
