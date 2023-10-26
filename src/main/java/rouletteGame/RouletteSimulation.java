@@ -9,7 +9,6 @@ import java.util.Random;
 @Component
 @RequiredArgsConstructor
 public class RouletteSimulation {
-    private GameResult gameResult;
     @Value("${roulette.totalExperiments}")
     private int totalExperiments;
     @Value("${roulette.useBarrelRotation}")
@@ -19,11 +18,11 @@ public class RouletteSimulation {
     private static final double SECOND_SHOT_PROBABILITY_WITHOUT_ROTATE = 1.0 / 4.0; //после первой попытки выстрелить, если не крутить барабан, получается один смертельный вариант из четырех
 
     public void startGame() {
-        runSimulation();
-        printResults();
+        GameResult result = runSimulation();
+        printResults(result);
     }
 
-    private void runSimulation() {
+    private GameResult runSimulation() {
         Random random = new Random();
         double firstPlayerSurvival = 0;
         double secondPlayerSurvivalRotate = 0;
@@ -43,24 +42,29 @@ public class RouletteSimulation {
                 }
             }
         }
+        return calculateResult(firstPlayerSurvival, secondPlayerSurvivalRotate, secondPlayerSurvivalShoot);
+    }
+
+    private GameResult calculateResult(double firstPlayerSurvival, double secondPlayerSurvivalRotate, double secondPlayerSurvivalShoot) {
         double firstPlayerSurvivalPercentage = (firstPlayerSurvival / totalExperiments) * 100;
         double secondPlayerSurvivalPercentage;
+
         if (useBarrelRotation) {
             secondPlayerSurvivalPercentage = (secondPlayerSurvivalRotate / totalExperiments) * 100;
         } else {
             secondPlayerSurvivalPercentage = (secondPlayerSurvivalShoot / totalExperiments) * 100;
         }
 
-        gameResult = new GameResult(firstPlayerSurvivalPercentage, secondPlayerSurvivalPercentage);
+        return new GameResult(firstPlayerSurvivalPercentage, secondPlayerSurvivalPercentage);
     }
 
-    private void printResults() {
+    private void printResults(GameResult result) {
         System.out.println("Total experiments: " + totalExperiments);
-        System.out.println("First Player Survival Percentage: " + gameResult.getFirstPlayerSurvivalPercentage() + "%");
+        System.out.println("First Player Survival Percentage: " + result.getFirstPlayerSurvivalPercentage() + "%");
         if (useBarrelRotation) {
-            System.out.println("Second Player Survival Percentage (Rotate): " + gameResult.getSecondPlayerSurvivalPercentage() + "%");
+            System.out.println("Second Player Survival Percentage (Rotate): " + result.getSecondPlayerSurvivalPercentage() + "%");
         } else {
-            System.out.println("Second Player Survival Percentage (Shoot): " + gameResult.getSecondPlayerSurvivalPercentage() + "%");
+            System.out.println("Second Player Survival Percentage (Shoot): " + result.getSecondPlayerSurvivalPercentage() + "%");
         }
     }
 }
