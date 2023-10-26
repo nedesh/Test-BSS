@@ -1,0 +1,3 @@
+roulette:
+  totalExperiments: 1000
+  useBarrelRotation: true

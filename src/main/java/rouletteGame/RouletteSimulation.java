@@ -1,3 +1,5 @@
+package rouletteGame;
+
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import java.util.Random;
